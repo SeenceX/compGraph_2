@@ -356,14 +356,14 @@ public:
 
 	void triangleUpDown() {
 		// Отрисовка верхней и нижней плоскости призмы
-
-		glColor3d(0, 0, 0.9);
+		glColor3d(0, 0, 1);
+		
 		for (int i = 0; i < triangles.size(); i++) {
-
+			
 			if (i == 2) {
 				int segments = 100;
 				// Ищем центр стороны по (x,y)
-
+				
 				double x_0 = triangles[i][0].x;
 				double y_0 = triangles[i][0].y;
 				
@@ -397,7 +397,7 @@ public:
 					glVertex3d(x, y, 0);
 				}
 				glEnd();
-
+				glColor3d(0, 0, 1);
 				// Строим верхнюю полуокружность
 				glBegin(GL_TRIANGLE_FAN);
 				glNormal3d(0, 0, 1); // Нормаль направлена вверх, так как это верхняя полуокружность
@@ -449,16 +449,16 @@ public:
 			Point normalDown = normalize(i);
 			// Указание нормали
 			glNormal3d(normalDown.x, normalDown.y, -1);
-
+			glColor3d(0, 0, 1);
 			// Низ призмы
 			for (int j = 0; j < 3; j++)
 				glVertex3d(triangles[i][j].x, triangles[i][j].y, triangles[i][j].z);
-
+			
 			// Нормализация (верх)
 			Point normalUp = normalize(i, height);
 			// Указание нормали
 			glNormal3d(normalUp.x, normalUp.y, 1);
-
+			glColor3d(0, 1, 0);
 			// Верх призмы
 			for (int j = 0; j < 3; j++)
 				glVertex3d(triangles[i][j].x, triangles[i][j].y, triangles[i][j].z + height);
@@ -487,7 +487,7 @@ public:
 	}
 
 	void triangleSides() {
-		glColor3d(0, 0, 0.9);
+		double colorFactor = 0;
 		for (int i = 0; i < sides.size(); i++) {
 			glBegin(GL_TRIANGLE_STRIP);
 
@@ -495,24 +495,33 @@ public:
 			Point normalSide = normalizeSides(i);
 			glNormal3d(normalSide.x, normalSide.y, normalSide.z);
 
+			// Устанавливаем цвет для всех вершин данной стороны
+			glColor3d(1 - colorFactor, 0 + colorFactor, colorFactor);
+
 			// Боковая сторона
-			glVertex3d(sides[i][0].x, sides[i][0].y, sides[i][0].z);
-			glVertex3d(sides[i][0].x, sides[i][0].y, sides[i][0].z + height);
-			glVertex3d(sides[i][1].x, sides[i][1].y, sides[i][1].z);
-			glVertex3d(sides[i][1].x, sides[i][1].y, sides[i][1].z + height);
+			for (int j = 0; j <= 1; j++) { // Цикл для каждой вершины в стороне
+				// Устанавливаем вершину
+				glVertex3d(sides[i][j].x, sides[i][j].y, sides[i][j].z);
+
+				// Устанавливаем вершину с высотой
+				glVertex3d(sides[i][j].x, sides[i][j].y, sides[i][j].z + height);
+			}
 
 			glEnd();
-			
+
+			// Изменяем цвет для следующей стороны
+			colorFactor += 0.1; 
+			if (colorFactor > 1.0) {
+				colorFactor = 0.0;
+			}
 		}
 	}
+
 };
 
 
 void Render(OpenGL *ogl)
 {
-
-
-
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_LIGHTING);
 
@@ -555,12 +564,12 @@ void Render(OpenGL *ogl)
 	figure.triangleSides();
 
 	//Начало рисования квадратика станкина
-	double A[2] = { -4, -4 };
+	/*double A[2] = { -4, -4 };
 	double B[2] = { 4, -4 };
 	double C[2] = { 4, 4 };
-	double D[2] = { -4, 4 };
+	double D[2] = { -4, 4 };*/
 
-	glBindTexture(GL_TEXTURE_2D, texId);
+	/*glBindTexture(GL_TEXTURE_2D, texId);
 
 	glColor3d(0.6, 0.6, 0.6);
 	glBegin(GL_QUADS);
@@ -575,7 +584,7 @@ void Render(OpenGL *ogl)
 	glTexCoord2d(0, 1);
 	glVertex2dv(D);
 
-	glEnd();
+	glEnd();*/
 	//конец рисования квадратика станкина
 
 
